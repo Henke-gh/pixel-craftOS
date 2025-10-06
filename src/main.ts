@@ -22,6 +22,32 @@ import { handleWindowResize } from './lib/utils/window'
 
 let view = new Rectangle(0, 0, window.innerWidth, window.innerHeight)
 
+//added start screen overlay
+function createStartScreen() {
+	const overlay = document.createElement('div')
+	overlay.id = 'start-screen'
+
+	const card = document.createElement('div')
+	card.id = 'start-card'
+	card.innerHTML = `
+		<h1>- Pixel Craft -</h1>
+		<p>Controls:</p>
+		<p>Use 'W', 'A', 'S', 'D' to move your character</p>
+		<p>Press any key to start</p>
+	`
+	overlay.appendChild(card)
+	document.body.appendChild(overlay)
+
+	const hideOverlay = () => {
+		overlay.remove()
+		window.removeEventListener('keydown', hideOverlay)
+		window.removeEventListener('click', hideOverlay)
+	}
+	window.addEventListener('keydown', hideOverlay)
+	window.addEventListener('click', hideOverlay)
+}
+
+//initializes the game loop
 const init = async () => {
 	const app = new Application()
 	await app.init({
@@ -77,6 +103,7 @@ const init = async () => {
 
 		view = new Rectangle(0, 0, window.innerWidth, window.innerHeight)
 	})
+	createStartScreen()
 }
 
 window.addEventListener('DOMContentLoaded', init)
