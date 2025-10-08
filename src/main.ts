@@ -33,7 +33,8 @@ function createStartScreen() {
 		<h1>- Pixel Craft -</h1>
 		<p>Controls:</p>
 		<p>Use 'W', 'A', 'S', 'D' to move your character</p>
-		<p>Press any key to start</p>
+		<p>Hold 'Shift' to sprint</p>
+		<p id="cta-text">Press any key to start</p>
 	`
 	overlay.appendChild(card)
 	document.body.appendChild(overlay)
