@@ -23,15 +23,17 @@ export const PLAYER_HEIGHT = 64
 const PLAYER_FRAME_LENGTH = 3
 
 const DEFAULT_SPEED = 1
+const SPRINT_MULTIPLIER = 1.8
 export let PLAYER_SPEED = DEFAULT_SPEED
 const WATER_SPEED_REDUCTION = 0.6
 // Diffrent water position if comming in or out from top or bottom of lakes since top you see the side of the ground but not on the bottom of lakes there for we move the player diffrently
 const PLAYER_WATER_Y_POS_TOP = TILE_HEIGHT
 const PLAYER_WATER_Y_POS_BOTTOM = TILE_HEIGHT_HALF
 let playerIsInWater = false
+let isSprintActive = false
 const PLAYER_VOLUM = 0.4
 
-const allowedKeys = ['w', 'a', 's', 'd'] as const
+const allowedKeys = ['w', 'a', 's', 'd', 'Shift'] as const
 type AllowedKeys = (typeof allowedKeys)[number]
 const playerMovementKeys = new Set<string>([])
 
