@@ -23,17 +23,17 @@ export const PLAYER_HEIGHT = 64
 const PLAYER_FRAME_LENGTH = 3
 
 const DEFAULT_SPEED = 1
-const SPRINT_MULTIPLIER = 1.8
+const SPRINT_MULTIPLIER = 1.8 // Added sprint multiplier for when shift is held
 export let PLAYER_SPEED = DEFAULT_SPEED
 const WATER_SPEED_REDUCTION = 0.6
 // Diffrent water position if comming in or out from top or bottom of lakes since top you see the side of the ground but not on the bottom of lakes there for we move the player diffrently
 const PLAYER_WATER_Y_POS_TOP = TILE_HEIGHT
 const PLAYER_WATER_Y_POS_BOTTOM = TILE_HEIGHT_HALF
 let playerIsInWater = false
-let isSprintActive = false
+let isSprintActive = false // Added sprintActive variable for when shift is held
 const PLAYER_VOLUM = 0.4
 
-const allowedKeys = ['w', 'a', 's', 'd', 'Shift'] as const
+const allowedKeys = ['w', 'a', 's', 'd', 'Shift'] as const // Added Shift to allowedKeys for speed boost
 type AllowedKeys = (typeof allowedKeys)[number]
 const playerMovementKeys = new Set<string>([])
 
@@ -137,6 +137,15 @@ export const registerPlayerMovement = (key: string) => {
 	if (isAllowedKey(key) && !playerMovementKeys.has(key)) {
 		const opposites = { w: 's', s: 'w', a: 'd', d: 'a' }
 
+		// Added if condition to check for Shift key to enable sprinting
+		if (key === 'Shift') {
+			if (!isSprintActive) {
+				isSprintActive = true
+				updatePlayerSpeed()
+			}
+			return
+		}
+
 		// If we have to directions on the same axis it will mess with the animation key
 		if (playerMovementKeys.has(opposites[key])) {
 			removePlayerMovement(opposites[key])
@@ -147,6 +156,15 @@ export const registerPlayerMovement = (key: string) => {
 }
 
 export const removePlayerMovement = (key: string) => {
+	// Added if condition to check for Shift key to disable sprinting
+	if (key === 'Shift') {
+		if (isSprintActive) {
+			isSprintActive = false
+			updatePlayerSpeed()
+		}
+		return
+	}
+
 	if (isAllowedKey(key) && playerMovementKeys.has(key)) {
 		playerMovementKeys.delete(key)
 	}
@@ -185,6 +203,12 @@ const handlePlayerAnimation = (player: Sprite) => {
 			}
 		}
 	}
+}
+
+// Added function for updating player speed
+const updatePlayerSpeed = () => {
+	const baseSpeed = playerIsInWater ? WATER_SPEED_REDUCTION : DEFAULT_SPEED
+	PLAYER_SPEED = isSprintActive ? baseSpeed * SPRINT_MULTIPLIER : baseSpeed
 }
 
 export const setPlayerAnimation = (
@@ -370,18 +394,22 @@ export const handlePlayerInWater = (player: Sprite, world: Container) => {
 
 	if (top && !playerIsInWater) {
 		playerIsInWater = true
+		updatePlayerSpeed()
 		PLAYER_SPEED = WATER_SPEED_REDUCTION
 		movePlayerTo(world.x, world.y - PLAYER_WATER_Y_POS_BOTTOM, world, player)
 	} else if (!bottom && playerIsInWater) {
 		playerIsInWater = false
+		updatePlayerSpeed()
 		PLAYER_SPEED = DEFAULT_SPEED
 		movePlayerTo(world.x, world.y + PLAYER_WATER_Y_POS_BOTTOM, world, player)
 	} else if (bottom && !playerIsInWater) {
 		playerIsInWater = true
+		updatePlayerSpeed()
 		PLAYER_SPEED = WATER_SPEED_REDUCTION
 		movePlayerTo(world.x, world.y + PLAYER_WATER_Y_POS_TOP, world, player)
 	} else if (!top && playerIsInWater) {
 		playerIsInWater = false
+		updatePlayerSpeed()
 		PLAYER_SPEED = DEFAULT_SPEED
 		movePlayerTo(world.x, world.y - PLAYER_WATER_Y_POS_TOP, world, player)
 	}
