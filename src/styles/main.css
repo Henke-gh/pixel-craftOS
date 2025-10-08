@@ -49,6 +49,7 @@ canvas {
 	align-items: center;
 	justify-content: center;
 	text-align: center;
+	position: relative;
 }
 
 #start-card h1 {
@@ -59,4 +60,20 @@ canvas {
 #start-card p {
 	font-size: 1.1rem;
 	margin: 0.4rem 0;
+}
+
+#cta-text {
+	position: absolute;
+	bottom: 2rem;
+	font-weight: bold;
+	animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
 }
